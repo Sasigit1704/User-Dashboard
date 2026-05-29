@@ -26,40 +26,40 @@ const initialUsers: User[] = [
     id: 1,
     firstName: "Sasi",
     lastName: "Kaladhar",
-    email: "sasi@gmail.com",
-    phone: "9876543210",
+    email: "sasi1704@gmail.com",
+    phone: "9550980853",
     password: "sasi123"
   },
   {
     id: 2,
     firstName: "Rahul",
     lastName: "Sharma",
-    email: "rahul@gmail.com",
-    phone: "9876543211",
+    email: "rahulsharma01@gmail.com",
+    phone: "8678987653",
     password: "rahul123"
   },
   {
     id: 3,
     firstName: "Ananya",
     lastName: "Reddy",
-    email: "ananya@gmail.com",
-    phone: "9876543212",
+    email: "ananyardy12@gmail.com",
+    phone: "9834746463",
     password: "ananya123"
   },
   {
     id: 4,
     firstName: "Kiran",
     lastName: "Verma",
-    email: "kiran@gmail.com",
-    phone: "9876543213",
+    email: "kiran2005@gmail.com",
+    phone: "9908792625",
     password: "kiran123"
   },
   {
     id: 5,
     firstName: "Priya",
     lastName: "Singh",
-    email: "priya@gmail.com",
-    phone: "9876543214",
+    email: "priyasingh03@gmail.com",
+    phone: "9177736845",
     password: "priya123"
   }
 ];
@@ -261,6 +261,7 @@ export default function Table() {
                 onChange={toggleSelectAll}
               />
             </th>
+            <th>S.No</th>
             <th className={sortKey === "id" ? "active-sort" : ""} onClick={() => toggleSort("id")}> ID {sortKey === "id" && (sortOrder === "asc" ? "↑" : "↓")}</th>
             <th onClick={() => toggleSort("firstName")}>First Name {sortKey === "firstName" && (sortOrder === "asc" ? "↑" : "↓")}</th>
             <th onClick={() => toggleSort("lastName")}>Last Name {sortKey === "lastName" && (sortOrder === "asc" ? "↑" : "↓")}</th>
@@ -289,6 +290,7 @@ export default function Table() {
                     onChange={() => toggleSelect(u.id)}
                 />
                 </td>
+                <td>{(page - 1) * rowsPerPage + paginatedData.indexOf(u) + 1}</td>
                 <td>{u.id}</td>
                 <td>{u.firstName}</td>
                 <td>{u.lastName}</td>
