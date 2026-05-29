@@ -1,4 +1,6 @@
 import React, { useReducer, useState, useMemo, useEffect } from "react";
+import Pagination from "./Pagination";
+import DeleteModal from "./DeleteModal";
 import "./Table.css";
 
 type User = {
@@ -8,9 +10,6 @@ type User = {
   email: string;
   phone: string;
   password: string;
-  age: number;
-  updatedOn: string;
-  status: "Pending" | "Accepted" | "Rejected";
 };
 
 type State = {
@@ -29,10 +28,7 @@ const initialUsers: User[] = [
     lastName: "Kaladhar",
     email: "sasi@gmail.com",
     phone: "9876543210",
-    password: "sasi123",
-    age: 21,
-    updatedOn: "2026-04-01",
-    status: "Pending"
+    password: "sasi123"
   },
   {
     id: 2,
@@ -40,10 +36,7 @@ const initialUsers: User[] = [
     lastName: "Sharma",
     email: "rahul@gmail.com",
     phone: "9876543211",
-    password: "rahul123",
-    age: 24,
-    updatedOn: "2026-04-02",
-    status: "Accepted"
+    password: "rahul123"
   },
   {
     id: 3,
@@ -51,10 +44,7 @@ const initialUsers: User[] = [
     lastName: "Reddy",
     email: "ananya@gmail.com",
     phone: "9876543212",
-    password: "ananya123",
-    age: 22,
-    updatedOn: "2026-04-03",
-    status: "Rejected"
+    password: "ananya123"
   },
   {
     id: 4,
@@ -62,10 +52,7 @@ const initialUsers: User[] = [
     lastName: "Verma",
     email: "kiran@gmail.com",
     phone: "9876543213",
-    password: "kiran123",
-    age: 25,
-    updatedOn: "2026-04-04",
-    status: "Pending"
+    password: "kiran123"
   },
   {
     id: 5,
@@ -73,10 +60,7 @@ const initialUsers: User[] = [
     lastName: "Singh",
     email: "priya@gmail.com",
     phone: "9876543214",
-    password: "priya123",
-    age: 23,
-    updatedOn: "2026-04-05",
-    status: "Accepted"
+    password: "priya123"
   }
 ];
 
@@ -124,7 +108,7 @@ export default function Table() {
 
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [search, setSearch] = useState("");
-  const [sortKey, setSortKey] = useState<keyof User | "fullName">("id");
+  const [sortKey, setSortKey] = useState<keyof User>("id");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [page, setPage] = useState(1);
   const rowsPerPage = 5;
@@ -139,8 +123,9 @@ export default function Table() {
     email: "",
     phone: "",
     password: "",
-    age: ""
   });
+
+  const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -162,12 +147,10 @@ export default function Table() {
     const query = search.toLowerCase().trim();
 
     return state.users.filter((u) => {
-      const fullName = (u.firstName + " " + u.lastName).toLowerCase();
 
       return (
         u.firstName.toLowerCase().includes(query) ||
         u.lastName.toLowerCase().includes(query) ||
-        fullName.includes(query) ||
         u.email.toLowerCase().includes(query)
       );
     });
@@ -180,13 +163,8 @@ export default function Table() {
       let valA: any;
       let valB: any;
 
-      if (sortKey === "fullName") {
-        valA = a.firstName + a.lastName;
-        valB = b.firstName + b.lastName;
-      } else {
-        valA = a[sortKey];
-        valB = b[sortKey];
-      }
+      valA = a[sortKey];
+      valB = b[sortKey];
 
       if (valA < valB) return sortOrder === "asc" ? -1 : 1;
       if (valA > valB) return sortOrder === "asc" ? 1 : -1;
@@ -272,6 +250,7 @@ export default function Table() {
           + Add New User
         </button>
       </div>
+      <div className = "table-container">
       <table>
         <thead>
           <tr>
@@ -288,10 +267,6 @@ export default function Table() {
             <th onClick={() => toggleSort("email")}>Email {sortKey === "email" && (sortOrder === "asc" ? "↑" : "↓")}</th>
             <th>Phone</th>
             <th>Password</th>
-            <th onClick={() => toggleSort("age")}>Age {sortKey === "age" && (sortOrder === "asc" ? "↑" : "↓")}</th>
-            <th onClick={() => toggleSort("fullName")}>Full Name {sortKey === "fullName" && (sortOrder === "asc" ? "↑" : "↓")}</th>
-            <th onClick={() => toggleSort("updatedOn")}>Updated On {sortKey === "updatedOn" && (sortOrder === "asc" ? "↑" : "↓")}</th>
-            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -299,7 +274,7 @@ export default function Table() {
         <tbody>
             {paginatedData.length === 0 ? (
             <tr>
-            <td colSpan={12} className="empty-state">
+            <td colSpan={8} className="empty-state">
                 No Users found
             </td>
             </tr>
@@ -319,11 +294,7 @@ export default function Table() {
                 <td>{u.lastName}</td>
                 <td>{u.email}</td>
                 <td>{u.phone}</td>
-                <td>{"•".repeat(u.password.length)}</td>
-                <td>{u.age}</td>
-                <td>{u.firstName + " " + u.lastName}</td>
-                <td>{u.updatedOn}</td>
-                <td className={u.status.toLowerCase()}>{u.status}</td>
+                <td>{"•".repeat(u.password?.length || 0)}</td>
                 <td>
                 <div className="menu-wrapper">
                 <button
@@ -337,16 +308,16 @@ export default function Table() {
 
                 {openMenuId === u.id && (
                 <div className="menu">
-                    <div onClick={() => setEditingUser(u)}>Edit</div>
+                    <div onClick={() => {
+                      setEditingUser(u);
+                      setOpenMenuId(null);
+                    }}>Edit</div>
 
                     <div
                     className="delete-option"
                     onClick={() => {
-                        if (window.confirm("Are you sure to delete?")) {
-                        simulateLoading(() => { dispatch({ type: "DELETE", payload: u.id });
-                      });
+                      setDeleteUserId(u.id);
                       setOpenMenuId(null);
-                    }
                   }}
                 >
                 Delete
@@ -360,29 +331,25 @@ export default function Table() {
             )}
         </tbody>
       </table>
-
-      <div className="pagination">
-        <button onClick={() => simulateLoading(() => setPage(page - 1))}
-            disabled={page === 1}>
-          Prev
-        </button>
-          {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            className={page === i + 1 ? "active-page" : ""}
-            onClick={() => simulateLoading(() => setPage(i + 1))}>{i + 1}
-          </button>))}
-        <button
-          onClick={() => simulateLoading(() => setPage(page + 1))}
-          disabled={page === totalPages}>Next
-        </button>
       </div>
+
+      <Pagination
+       page={page}
+       totalPages={totalPages}
+       setPage={setPage}
+       simulateLoading={simulateLoading}/>
+       <DeleteModal
+        deleteUserId={deleteUserId}
+        setDeleteUserId={setDeleteUserId}
+        simulateLoading={simulateLoading}
+        dispatch={dispatch}/>
 
       {showModal && (
         <div className="modal">
           <div className="modal-box">
             <h3>Add User</h3>
 
+            <label>First Name:</label>
             <input
               placeholder="First Name"
               onChange={(e) =>
@@ -390,6 +357,7 @@ export default function Table() {
               }
             />
 
+            <label>Last Name:</label>
             <input
               placeholder="Last Name"
               onChange={(e) =>
@@ -397,6 +365,7 @@ export default function Table() {
               }
             />
 
+            <label>Email:</label>
             <input
               placeholder="Email"
               onChange={(e) =>
@@ -404,6 +373,7 @@ export default function Table() {
               }
             />
 
+            <label>Phone Number:</label>
             <input
               placeholder="Phone Number"
               onChange={(e) =>
@@ -411,19 +381,12 @@ export default function Table() {
               }
             />
 
+            <label>Password:</label>
             <input
               type="password"
               placeholder="Password"
               onChange={(e) =>
                 setNewUser({ ...newUser, password: e.target.value })
-              }
-            />
-
-            <input
-              type="number"
-              placeholder="Age"
-              onChange={(e) =>
-                setNewUser({ ...newUser, age: e.target.value })
               }
             />
 
@@ -465,16 +428,6 @@ export default function Table() {
                     return;
                   }
 
-                  if (!newUser.age || isNaN(Number(newUser.age))) {
-                    alert("Age must be a valid number");
-                    return;
-                  }
-
-                  if (
-                    Number(newUser.age) < 19 || Number(newUser.age) > 40) {
-                    alert("Age must be between 19 and 40");
-                    return;
-                  }
                   simulateLoading(() => {
                     
                     dispatch({
@@ -485,10 +438,7 @@ export default function Table() {
                       lastName: newUser.lastName,
                       email: newUser.email,
                       phone: newUser.phone,
-                      password: newUser.password,
-                      age: Number(newUser.age),
-                      updatedOn: new Date().toISOString().split("T")[0],
-                      status: "Pending"
+                      password: newUser.password
                       }
                     });
                     setNewUser({
@@ -496,8 +446,7 @@ export default function Table() {
                      lastName: "",
                      email: "",
                      phone: "",
-                     password: "",
-                     age: ""
+                     password: ""
                     });
                     setShowModal(false);
                   });
@@ -514,6 +463,7 @@ export default function Table() {
         <div className="modal-box">
         <h3>Edit User</h3>
 
+        <label>First Name:</label>
         <input
             value={editingUser.firstName}
             onChange={(e) =>
@@ -521,6 +471,7 @@ export default function Table() {
             }
         />
 
+        <label>Last Name:</label>
         <input
           value={editingUser.lastName}
           onChange={(e) =>
@@ -528,6 +479,7 @@ export default function Table() {
         }
         />
 
+        <label>Email:</label>
         <input
           value={editingUser.email}
           onChange={(e) =>
@@ -535,6 +487,7 @@ export default function Table() {
           }
         />
 
+        <label>Phone:</label>
         <input
           value={editingUser.phone}
           onChange={(e) =>
@@ -542,6 +495,7 @@ export default function Table() {
           }
         />
 
+        <label>Password:</label>
         <input
           type="password"
           value={editingUser.password}
@@ -549,14 +503,6 @@ export default function Table() {
             setEditingUser({ ...editingUser, password: e.target.value })
           }
         />
-
-        <input
-          type="number"
-          value={editingUser.age}
-          onChange={(e) =>
-            setEditingUser({...editingUser, age: Number(e.target.value)})
-          }
-       />
 
        <div className="modal-actions">
         <button
@@ -585,25 +531,9 @@ export default function Table() {
               alert("Phone number must contain 10 digits");
               return;
             }
-
-            if (!editingUser.age || isNaN(Number(editingUser.age))) {
-              alert("Age must be a valid number");
-              return;
-            }
-
-            if (
-              Number(editingUser.age) < 19 || Number(editingUser.age) > 40) {
-              alert("Age must be between 19 and 40");
-              return;
-            }
-
-            if (window.confirm("Save changes?")) {
-              simulateLoading(() => {dispatch({type: "UPDATE",payload: {...editingUser,
-              updatedOn: new Date().toISOString().split("T")[0],
-              status: "Pending"}});
+              simulateLoading(() => {dispatch({type: "UPDATE",payload: editingUser});
               setEditingUser(null);
              });
-            }
            }}
         >
         Save

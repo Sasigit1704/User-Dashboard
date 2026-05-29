@@ -83,7 +83,6 @@ h2 {
 .table-container {
   width: 100%;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 table {
@@ -159,7 +158,8 @@ tbody tr:hover {
 
 .menu-wrapper {
   position: relative;
-  z-index: 1000;
+  overflow: visible;
+  z-index: 9999;
 }
 
 .menu-wrapper button {
@@ -171,15 +171,14 @@ tbody tr:hover {
 
 .menu {
   position: absolute;
-  right: 0;
-  top: 30px;
+  right: 2px;
+  bottom: 1px;
   background: white;
   border: 1px solid #ddd;
-  border-radius: 6px;
+  border-radius: 8px;
   width: 120px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  z-index: 2000;
-  pointer-events: auto;
+  z-index: 10000;
 }
 
 .menu div {
@@ -189,6 +188,14 @@ tbody tr:hover {
 
 .menu div:hover {
   background: #f0f0f0;
+}
+
+.delete-btn {
+  background: #d32f2f;
+}
+
+.delete-btn:hover {
+  background: #b71c1c;
 }
 
 .delete-option {
@@ -251,8 +258,28 @@ tbody tr:hover {
   background: white;
   padding: 24px;
   border-radius: 10px;
-  width: 350px;
+  width: 90%;
+  max-width: 420px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.modal-box label {
+  display: block;
+  margin-bottom: 6px;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-box p {
+  width: 100%;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.5;
 }
 
 .modal-box input {
@@ -270,7 +297,9 @@ tbody tr:hover {
 
 .modal-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .modal-actions button {

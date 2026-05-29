@@ -8,9 +8,6 @@ export const users: User[] = [
     email: "sasi@gmail.com",
     phone: "9876543210",
     password: "sasi123",
-    age: 21,
-    updatedOn: "2026-04-01",
-    status: "Pending",
   },
   {
     id: 2,
@@ -19,9 +16,6 @@ export const users: User[] = [
     email: "rahul@gmail.com",
     phone: "9876543211",
     password: "rahul123",
-    age: 24,
-    updatedOn: "2026-04-02",
-    status: "Accepted",
   },
   {
     id: 3,
@@ -30,9 +24,6 @@ export const users: User[] = [
     email: "ananya@gmail.com",
     phone: "9876543212",
     password: "ananya123",
-    age: 22,
-    updatedOn: "2026-04-03",
-    status: "Rejected",
   },
   {
     id: 4,
@@ -41,9 +32,6 @@ export const users: User[] = [
     email: "kiran@gmail.com",
     phone: "9876543213",
     password: "kiran123",
-    age: 25,
-    updatedOn: "2026-04-04",
-    status: "Pending",
   },
   {
     id: 5,
@@ -52,9 +40,6 @@ export const users: User[] = [
     email: "priya@gmail.com",
     phone: "9876543214",
     password: "priya123",
-    age: 23,
-    updatedOn: "2026-04-05",
-    status: "Accepted",
   },
   {
     id: 6,
@@ -63,9 +48,6 @@ export const users: User[] = [
     email: "arjun@gmail.com",
     phone: "9876543215",
     password: "arjun123",
-    age: 26,
-    updatedOn: "2026-04-06",
-    status: "Pending",
   },
   {
     id: 7,
@@ -74,9 +56,6 @@ export const users: User[] = [
     email: "sneha@gmail.com",
     phone: "9876543216",
     password: "sneha123",
-    age: 21,
-    updatedOn: "2026-04-07",
-    status: "Rejected",
   },
   {
     id: 8,
@@ -85,9 +64,6 @@ export const users: User[] = [
     email: "rohit@gmail.com",
     phone: "9876543217",
     password: "rohit123",
-    age: 27,
-    updatedOn: "2026-04-08",
-    status: "Accepted",
   },
   {
     id: 9,
@@ -96,9 +72,6 @@ export const users: User[] = [
     email: "meena@gmail.com",
     phone: "9876543218",
     password: "meena123",
-    age: 24,
-    updatedOn: "2026-04-09",
-    status: "Pending",
   },
   {
     id: 10,
@@ -107,8 +80,5 @@ export const users: User[] = [
     email: "vikram@gmail.com",
     phone: "9876543219",
     password: "vikram123",
-    age: 28,
-    updatedOn: "2026-04-10",
-    status: "Accepted",
   },
 ];
