@@ -1,8 +1,10 @@
+import { AppDispatch } from "../app/store";
+import { deleteUser } from "../features/user/userSlice";
 type Props = {
   deleteUserId: number | null;
   setDeleteUserId: (id: number | null) => void;
   simulateLoading: (callback: () => void) => void;
-  dispatch: React.Dispatch<any>;
+  dispatch: AppDispatch;
 };
 
 export default function DeleteModal({
@@ -27,11 +29,7 @@ export default function DeleteModal({
           <button className="delete-btn"
             onClick={() => {
               simulateLoading(() => {
-                dispatch({
-                  type: "DELETE",
-                  payload: deleteUserId
-                });
-
+                dispatch(deleteUser(deleteUserId));
                 setDeleteUserId(null);
               });
             }}

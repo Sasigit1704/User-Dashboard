@@ -1,25 +1,13 @@
-import React, { useReducer, useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Pagination from "./Pagination";
 import DeleteModal from "./DeleteModal";
+import { setUsers, updateUser } from "../features/user/userSlice";
+import { AppDispatch } from "../app/store";
+import { addUser } from "../features/user/userSlice";
+import { User } from "../types/User";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../app/store";
 import "./Table.css";
-
-type User = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  password: string;
-};
-
-type State = {
-  users: User[];
-};
-
-type Action =
-  | { type: "ADD"; payload: User }
-  | { type: "DELETE"; payload: number }
-  | { type: "UPDATE"; payload: User };
 
 const initialUsers: User[] = [
   {
@@ -64,26 +52,6 @@ const initialUsers: User[] = [
   }
 ];
 
-function reducer(state: State, action: Action): State {
-  switch (action.type) {
-    case "ADD":
-      return { users: [...state.users, action.payload] };
-
-    case "DELETE":
-      return { users: state.users.filter((u) => u.id !== action.payload) };
-
-    case "UPDATE":
-      return {
-        users: state.users.map((u) =>
-          u.id === action.payload.id ? action.payload : u
-        )
-      };
-
-    default:
-      return state;
-  }
-}
-
 export default function Table() {
   const [loading, setLoading] = useState(false);
 
@@ -95,16 +63,11 @@ export default function Table() {
     }, 800);
   };
 
-  const [state, dispatch] = useReducer(
-    reducer,
-    { users: [] },
-    () => {
-      const saved = localStorage.getItem("users");
-      return saved
-        ? { users: JSON.parse(saved) }
-        : { users: initialUsers };
-    }
-  );
+const dispatch = useDispatch<AppDispatch>();
+
+const users = useSelector(
+  (state: RootState) => state.user.users
+);
 
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [search, setSearch] = useState("");
@@ -140,13 +103,19 @@ export default function Table() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("users", JSON.stringify(state.users));
-  }, [state.users]);
+    localStorage.setItem("users", JSON.stringify(users));
+  }, [users]);
+
+  useEffect(() => {
+  if (users.length === 0) {
+    dispatch(setUsers(initialUsers));
+  }
+}, [dispatch, users.length]);
 
   const filteredData = useMemo(() => {
     const query = search.toLowerCase().trim();
 
-    return state.users.filter((u) => {
+    return users.filter((u) => {
 
       return (
         u.firstName.toLowerCase().includes(query) ||
@@ -154,7 +123,7 @@ export default function Table() {
         u.email.toLowerCase().includes(query)
       );
     });
-  }, [search, state.users]);
+  }, [search, users]);
 
   const sortedData = useMemo(() => {
     const data = [...filteredData];
@@ -432,17 +401,16 @@ export default function Table() {
 
                   simulateLoading(() => {
                     
-                    dispatch({
-                      type: "ADD",
-                      payload: {
-                      id: state.users.length ? Math.max(...state.users.map(u => u.id)) + 1 : 1,
+                    dispatch(
+                     addUser({
+                      id: users.length ? Math.max(...users.map(u => u.id)) + 1 : 1,
                       firstName: newUser.firstName,
                       lastName: newUser.lastName,
                       email: newUser.email,
                       phone: newUser.phone,
                       password: newUser.password
-                      }
-                    });
+                     })
+                    );
                     setNewUser({
                      firstName: "",
                      lastName: "",
@@ -533,7 +501,7 @@ export default function Table() {
               alert("Phone number must contain 10 digits");
               return;
             }
-              simulateLoading(() => {dispatch({type: "UPDATE",payload: editingUser});
+              simulateLoading(() => {dispatch(updateUser(editingUser));
               setEditingUser(null);
              });
            }}
