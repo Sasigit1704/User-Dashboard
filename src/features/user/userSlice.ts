@@ -1,13 +1,22 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { users as initialUsers } from "../../data/mockData";
+import { User } from "../../types/User";
 
-const initialState = {
-  users: initialUsers,
+type UserState = {
+  users: User[];
+  search: string;
+  page: number;
+  sortKey: string;
+  sortOrder: "asc" | "desc";
+  deleteUserId: number | null;
+};
+
+const initialState: UserState = {
+  users: [],
   search: "",
   page: 1,
   sortKey: "id",
   sortOrder: "asc",
-  deleteUserId: null as number | null,
+  deleteUserId: null,
 };
 
 const userSlice = createSlice({
@@ -15,19 +24,23 @@ const userSlice = createSlice({
   initialState,
 
   reducers: {
-    addUser: (state, action: PayloadAction<any>) => {
-      state.users.push(action.payload);
+    setUsers: (state, action: PayloadAction<User[]>) => {
+      state.users = action.payload;
     },
 
-    updateUser: (state, action: PayloadAction<any>) => {
-      state.users = state.users.map((user) =>
-        user.id === action.payload.id ? action.payload : user
-      );
+    addUser: (state, action: PayloadAction<User>) => {
+      state.users.push(action.payload);
     },
 
     deleteUser: (state, action: PayloadAction<number>) => {
       state.users = state.users.filter(
-        (user) => user.id !== action.payload
+        (user: User) => user.id !== action.payload
+      );
+    },
+
+    updateUser: (state, action: PayloadAction<User>) => {
+      state.users = state.users.map((user: User) =>
+        user.id === action.payload.id ? action.payload : user
       );
     },
 
@@ -39,12 +52,15 @@ const userSlice = createSlice({
       state.page = action.payload;
     },
 
-    setSortKey: (state, action: PayloadAction<string>) => {
-      state.sortKey = action.payload;
-    },
-
-    setSortOrder: (state, action: PayloadAction<"asc" | "desc">) => {
-      state.sortOrder = action.payload;
+    setSort: (
+      state,
+      action: PayloadAction<{
+        sortKey: string;
+        sortOrder: "asc" | "desc";
+      }>
+    ) => {
+      state.sortKey = action.payload.sortKey;
+      state.sortOrder = action.payload.sortOrder;
     },
 
     setDeleteUserId: (
@@ -57,13 +73,13 @@ const userSlice = createSlice({
 });
 
 export const {
+  setUsers,
   addUser,
-  updateUser,
   deleteUser,
+  updateUser,
   setSearch,
   setPage,
-  setSortKey,
-  setSortOrder,
+  setSort,
   setDeleteUserId,
 } = userSlice.actions;
 
