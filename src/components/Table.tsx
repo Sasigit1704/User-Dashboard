@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Pagination from "./Pagination";
 import DeleteModal from "./DeleteModal";
-import { setUsers, updateUser } from "../features/user/userSlice";
+import {
+  setUsers, addUser, updateUser, setSearch, setPage as setReduxPage, setSortKey, setSortOrder
+} from "../features/user/userSlice";
 import { AppDispatch } from "../app/store";
-import { addUser } from "../features/user/userSlice";
 import { User } from "../types/User";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../app/store";
@@ -68,12 +69,23 @@ const dispatch = useDispatch<AppDispatch>();
 const users = useSelector(
   (state: RootState) => state.user.users
 );
+const search = useSelector(
+  (state: RootState) => state.user.search
+);
+
+const page = useSelector(
+  (state: RootState) => state.user.page
+);
+
+const sortKey = useSelector(
+  (state: RootState) => state.user.sortKey
+) as keyof User;
+
+const sortOrder = useSelector(
+  (state: RootState) => state.user.sortOrder
+);
 
   const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [search, setSearch] = useState("");
-  const [sortKey, setSortKey] = useState<keyof User>("id");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [page, setPage] = useState(1);
   const rowsPerPage = 5;
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -153,10 +165,10 @@ const users = useSelector(
 
   const toggleSort = (key: any) => {
     if (sortKey === key) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+      dispatch(setSortOrder(sortOrder === "asc" ? "desc" : "asc"));
     } else {
-      setSortKey(key);
-      setSortOrder("asc");
+      dispatch(setSortKey(key));
+      dispatch(setSortOrder("asc"));
     }
   };
 
@@ -181,10 +193,7 @@ const users = useSelector(
   };
 
   const toggleSelect = (id: number) => {
-    setSelectedIds((prev) =>
-      prev.includes(id)
-        ? prev.filter((i) => i !== id)
-        : [...prev, id]
+    setSelectedIds((prev) => prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
 
@@ -207,8 +216,8 @@ const users = useSelector(
           className="search"
           placeholder="Search by name or email..."
           onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
+            dispatch(setSearch(e.target.value));
+            dispatch(setReduxPage(1));
           }}
         />
 
@@ -307,7 +316,7 @@ const users = useSelector(
       <Pagination
        page={page}
        totalPages={totalPages}
-       setPage={setPage}
+       setPage={(value) => dispatch(setReduxPage(value))}
        simulateLoading={simulateLoading}/>
        <DeleteModal
         deleteUserId={deleteUserId}

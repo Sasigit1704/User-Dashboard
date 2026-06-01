@@ -69,6 +69,14 @@ const userSlice = createSlice({
     ) => {
       state.deleteUserId = action.payload;
     },
+
+    setSortKey: (state, action: PayloadAction<string>) => {
+      state.sortKey = action.payload;
+    },
+
+    setSortOrder: (state, action: PayloadAction<"asc" | "desc">) => {
+      state.sortOrder = action.payload;
+    },
   },
 });
 
@@ -79,7 +87,8 @@ export const {
   updateUser,
   setSearch,
   setPage,
-  setSort,
+  setSortKey,
+  setSortOrder,
   setDeleteUserId,
 } = userSlice.actions;
 
