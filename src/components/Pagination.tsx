@@ -1,47 +1,54 @@
 type Props = {
-  page: number;
-  totalPages: number;
-  setPage: (page: number) => void;
-  simulateLoading: (callback: () => void) => void;
-};
+  page: number
+  totalPages: number
+  setPage: (page: number) => void
+  simulateLoading: (callback: () => void) => void
+}
 
 export default function Pagination({
   page,
   totalPages,
   setPage,
-  simulateLoading
+  simulateLoading,
 }: Props) {
+  // Nothing to paginate.
+  if (totalPages <= 1) return null
+
+  const goTo = (target: number) => simulateLoading(() => setPage(target))
+
   return (
-    <div className="pagination">
+    <nav className="pagination" aria-label="Table pagination">
       <button
-        onClick={() =>
-          simulateLoading(() => setPage(page - 1))
-        }
+        type="button"
+        onClick={() => goTo(page - 1)}
         disabled={page === 1}
       >
         Prev
       </button>
 
-      {Array.from({ length: totalPages }, (_, i) => (
-        <button
-          key={i}
-          className={page === i + 1 ? "active-page" : ""}
-          onClick={() =>
-            simulateLoading(() => setPage(i + 1))
-          }
-        >
-          {i + 1}
-        </button>
-      ))}
+      {Array.from({ length: totalPages }, (_, i) => {
+        const pageNumber = i + 1
+        const isCurrent = page === pageNumber
+        return (
+          <button
+            key={pageNumber}
+            type="button"
+            className={isCurrent ? "active-page" : ""}
+            aria-current={isCurrent ? "page" : undefined}
+            onClick={() => goTo(pageNumber)}
+          >
+            {pageNumber}
+          </button>
+        )
+      })}
 
       <button
-        onClick={() =>
-          simulateLoading(() => setPage(page + 1))
-        }
+        type="button"
+        onClick={() => goTo(page + 1)}
         disabled={page === totalPages}
       >
         Next
       </button>
-    </div>
-  );
+    </nav>
+  )
 }

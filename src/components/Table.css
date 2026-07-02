@@ -358,3 +358,74 @@ tbody tr:hover {
     gap: 5px;
   }
 }
+
+/*
+ * Keep your existing Table.css rules and ADD the selectors below.
+ * These style the elements introduced by the refactor:
+ *  - button-based sort headers and row menu items (were <div onClick>)
+ *  - inline field-level validation errors (replacing alert())
+ *  - the password show/hide toggle
+ */
+
+/* Sort headers are now real buttons for keyboard access. */
+.sort-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.sort-header:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Row action menu items are now buttons but should look like the old rows. */
+.menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: #f3f4f6;
+}
+
+.menu-item.delete-option {
+  color: #dc2626;
+}
+
+/* Grouping wrapper for each labelled input in the form modal. */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.field-error {
+  margin-top: 4px;
+  color: #dc2626;
+  font-size: 0.8rem;
+}
+
+.toggle-password {
+  align-self: flex-end;
+  margin-top: 4px;
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
