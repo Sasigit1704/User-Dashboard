@@ -41,9 +41,10 @@ src
 │   ├── Table.tsx
 │   ├── Pagination.tsx
 │   └── DeleteModal.tsx
+│   └── UserFormModal.tsx
 │
 ├── data
-│   └── mockData.ts
+│   └── intitialUsers.ts
 │
 ├── types
 │   └── User.ts
